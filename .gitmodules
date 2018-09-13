@@ -1,0 +1,3 @@
+[submodule "external/cpprelude"]
+	path = external/cpprelude
+	url = git@github.com:MoustaphaSaad/cpprelude.git
