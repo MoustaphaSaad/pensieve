@@ -11,6 +11,7 @@ end
 bin_path 		= path.getabsolute("bin")
 build_path 		= path.getabsolute("build")
 cpprelude_path 	= path.getabsolute("external/cpprelude/cpprelude")
+msgpack_path	= path.getabsolute("external/msgpack-c")
 pensieve_path	= path.getabsolute("pensieve")
 
 workspace "pensieve"
@@ -20,5 +21,6 @@ workspace "pensieve"
 	startproject "scratch"
 
 	include (cpprelude_path .. "/cpprelude.lua")
+	include (msgpack_path .. "/msgpack-c.lua")
 	include ("pensieve/pensieve.lua")
 	include ("scratch/scratch.lua")

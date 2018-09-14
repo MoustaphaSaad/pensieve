@@ -1,3 +1,6 @@
 [submodule "external/cpprelude"]
 	path = external/cpprelude
 	url = git@github.com:MoustaphaSaad/cpprelude.git
+[submodule "external/msgpack-c"]
+	path = external/msgpack-c
+	url = git@github.com:MoustaphaSaad/msgpack-c.git
