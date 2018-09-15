@@ -14,18 +14,20 @@ project "scratch"
 	{
 		"include/",
 		cpprelude_path .. "/include/",
-		pensieve_path .. "/include/"
+		pensieve_path .. "/include/",
+		msgpack_path .. "/include/"
 	}
 
 	links
 	{
 		"cpprelude",
-		"pensieve"
+		"pensieve",
+		"msgpack-c"
 	}
 
 	--language configuration
 	exceptionhandling "OFF"
-	rtti "OFF"
+	rtti "ON"
 	warnings "Extra"
 	cppdialect "c++14"
 

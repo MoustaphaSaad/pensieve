@@ -13,14 +13,15 @@ project "pensieve"
 	includedirs
 	{
 		"include/",
-		cpprelude_path .. "/include/"
+		cpprelude_path .. "/include/",
+		msgpack_path .. "/include/"
 	}
 
-	links { "cpprelude" }
+	links { "cpprelude", "msgpack-c" }
 
 	--language configuration
 	exceptionhandling "OFF"
-	rtti "OFF"
+	rtti "ON"
 	warnings "Extra"
 	cppdialect "c++14"
 
