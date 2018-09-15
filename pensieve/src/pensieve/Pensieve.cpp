@@ -85,6 +85,10 @@ namespace pnsv
 		if(path.size() >= 0xFFFF)
 			return false;
 
+		//paths should not have / at the end
+		if(path.bytes.back() == '/')
+			return false;
+
 		while(!path.empty())
 		{
 			if(path.front() == '/')
@@ -198,7 +202,7 @@ namespace pnsv
 		return INVALID_FILE_HANDLE;
 	}
 
-	API_PNSV usize
+	usize
 	Header::file_remove(const String& path)
 	{
 		usize result = usize(-1);
@@ -214,7 +218,19 @@ namespace pnsv
 		return result;
 	}
 
-	API_PNSV Dynamic_Array<Virtual_Handle>
+	usize
+	Header::file_remove(Virtual_Handle handle)
+	{
+		usize result = usize(-1);
+
+		files[handle.header_entry_index].name.clear();
+		result = files[handle.header_entry_index].index;
+		++deleted_files_count;
+
+		return result;
+	}
+
+	Dynamic_Array<Virtual_Handle>
 	Header::files_match(const String& pattern) const
 	{
 		Dynamic_Array<Virtual_Handle> result;
@@ -262,11 +278,11 @@ namespace pnsv
 		content[header.files[handle.header_entry_index].index].bin.clear();
 	}
 
-	String_Range
+	const String&
 	Pensieve::file_name(Virtual_Handle handle) const
 	{
 		assert(header.files.count() > handle.header_entry_index);
-		return header.files[handle.header_entry_index].name.all();
+		return header.files[handle.header_entry_index].name;
 	}
 
 	const Memory_Stream&
@@ -305,6 +321,19 @@ namespace pnsv
 		return false;
 	}
 
+	bool
+	Pensieve::file_remove(Virtual_Handle handle)
+	{
+		assert(header.files.count() > handle.header_entry_index);
+		usize index = header.file_remove(handle);
+		if(index != usize(-1))
+		{
+			content[index].bin.reset();
+			return true;
+		}
+		return false;
+	}
+
 	Dynamic_Array<Virtual_Handle>
 	Pensieve::files_match(const String& pattern) const
 	{
@@ -321,7 +350,7 @@ namespace pnsv
 	}
 
 	void
-	Pensieve::write_to_stream(IO_Trait* io)
+	Pensieve::save_to_stream(IO_Trait* io)
 	{
 		vprintb(io, MAGIC, MAJOR, MINOR);
 
@@ -370,7 +399,7 @@ namespace pnsv
 		auto result = File::open(path);
 		if(result.error != OS_ERROR::OK)
 			return false;
-		write_to_stream(result.value);
+		save_to_stream(result.value);
 	}
 
 	Pensieve::ERROR_CODE
@@ -384,7 +413,7 @@ namespace pnsv
 
 		u16 major = 0, minor = 0;
 		ASSERT_FAIL(ERROR_FILE_CORRUPTED, vreadb(io, major, minor) == 4);
-		ASSERT_FAIL(ERROR_INCOMPATIBLE_MAJOR_VERSION, major <= major);
+		ASSERT_FAIL(ERROR_INCOMPATIBLE_MAJOR_VERSION, major <= MAJOR);
 
 		switch (major)
 		{

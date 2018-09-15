@@ -19,6 +19,7 @@ namespace pnsv
 	 * [/*] are the only not allowed characters in [file/folder]names
 	 * All paths should start with the root `/`
 	 * No relative paths support
+	 * Paths should not have any `/` at the end
 	 *
 	 * Pensieve spec:
 	 * All values are little endian
@@ -32,7 +33,7 @@ namespace pnsv
 	 * 	+24 2 filename length
 	 * 	+26 N filename
 	 * 	+26+N 8 offset of the file measured from the start of the data
-	 * +08 4 CRC32 starting from the start of the file to this byte
+	 * +08 4 CRC32 starting from `(+06) data length` to this byte
 	 * START OF DATA
 	 * +00 8 binary content size in bytes
 	 * +08 N binary content
@@ -94,6 +95,9 @@ namespace pnsv
 		API_PNSV usize
 		file_remove(const String& path);
 
+		API_PNSV usize
+		file_remove(Virtual_Handle handle);
+
 		API_PNSV Dynamic_Array<Virtual_Handle>
 		files_match(const String& pattern) const;
 	};
@@ -125,7 +129,7 @@ namespace pnsv
 		API_PNSV void
 		file_clear(Virtual_Handle handle);
 
-		API_PNSV String_Range
+		API_PNSV const String&
 		file_name(Virtual_Handle handle) const;
 
 		API_PNSV const Memory_Stream&
@@ -140,6 +144,9 @@ namespace pnsv
 		API_PNSV bool
 		file_remove(const String& path);
 
+		API_PNSV bool
+		file_remove(Virtual_Handle handle);
+
 		API_PNSV Dynamic_Array<Virtual_Handle>
 		files_match(const String& pattern) const;
 
@@ -147,7 +154,7 @@ namespace pnsv
 		total_data_size() const;
 
 		API_PNSV void
-		write_to_stream(IO_Trait* io);
+		save_to_stream(IO_Trait* io);
 
 		API_PNSV bool
 		save_on_disk(const char* path);

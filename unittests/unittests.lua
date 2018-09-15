@@ -1,6 +1,6 @@
-project "pensieve"
+project "unittest"
 	language "C++"
-	kind "SharedLib"
+	kind "ConsoleApp"
 	targetdir (bin_path .. "/%{cfg.platform}/%{cfg.buildcfg}/")
 	location  (build_path .. "/%{prj.name}/")
 
@@ -13,13 +13,19 @@ project "pensieve"
 	includedirs
 	{
 		"include/",
-		cpprelude_path .. "/include/"
+		cpprelude_path .. "/include/",
+		pensieve_path .. "/include/",
+		catch_path .. "/single_include/"
 	}
 
-	links { "cpprelude" }
+	links
+	{
+		"cpprelude",
+		"pensieve"
+	}
 
 	--language configuration
-	exceptionhandling "OFF"
+	exceptionhandling "ON"
 	rtti "OFF"
 	warnings "Extra"
 	cppdialect "c++14"
@@ -35,6 +41,7 @@ project "pensieve"
 	--windows configuration
 	filter "system:windows"
 		defines { "OS_WINDOWS" }
+		buildoptions {"/utf-8"}
 		if os.getversion().majorversion == 10.0 then
 			systemversion(win10_sdk_version())
 		end
@@ -44,12 +51,11 @@ project "pensieve"
 
 	--os agnostic configuration
 	filter "configurations:debug"
-		targetsuffix "d"
-		defines {"DEBUG", "PNSV_DLL"}
+		defines {"DEBUG"}
 		symbols "On"
 
 	filter "configurations:release"
-		defines {"NDEBUG", "PNSV_DLL"}
+		defines {"NDEBUG"}
 		optimize "On"
 
 	filter "platforms:x86"
