@@ -64,6 +64,25 @@ read(const char* filename)
 		assert(i == ii);
 	}
 }
+
+void
+read_pattern_search(const char* filename)
+{
+	Pensieve pn;
+	auto err = pn.load_from_disk(filename);
+	if(err) return;
+
+	//* is used to traverse the top level of the folder
+	//** is used to traverse the folders recursivly
+
+	//here i search recursivly for all the files in meshes folder that has a `.car` ext
+	auto files = pn.files_match("/meshes/**/*.car");
+	for(const auto& handle: files)
+	{
+		IO_Trait* io = pn.file_stream(handle);
+		//read the mesh
+	}
+}
 ```
 
 ## pnsv-cli
